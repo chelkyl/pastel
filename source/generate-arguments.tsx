@@ -36,6 +36,10 @@ const getDefaultValueDescription = (
 	return getConfig(value)?.defaultValueDescription;
 };
 
+const getRequiredVariadic = (value: string | undefined): boolean => {
+	return getConfig(value)?.requiredVariadic ?? false;
+};
+
 export default function generateArguments(
 	argumentsSchema: CommandArguments,
 ): Argument[] {
@@ -122,8 +126,16 @@ export default function generateArguments(
 		const restSchema = argumentsSchema._def.rest;
 
 		if (restSchema) {
-			const name = getName(restSchema.description) ?? 'arg';
-			const argument = new Argument(`[${name}...]`);
+			let name = getName(restSchema.description);
+			const description = getDescription(restSchema.description);
+			const isOptional = !getRequiredVariadic(restSchema.description);
+
+			name = decamelize(name ?? 'arg', {separator: '-'});
+
+			const argument = new Argument(
+				isOptional ? `[${name}...]` : `<${name}...>`,
+				description,
+			);
 
 			if (restSchema instanceof ZodNumber) {
 				argument.argParser<number[]>((value, previousValue) => {

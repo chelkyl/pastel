@@ -76,4 +76,10 @@ export type CommandArgumentConfig = {
 	 * @default JSON.stringify(defaultValue)
 	 */
 	defaultValueDescription?: string;
+
+	/**
+	 * Only applicable for a variadic argument.
+	 * If true, at least one argument is required. Otherwise, the arguments are optional.
+	 */
+	requiredVariadic?: boolean;
 };
